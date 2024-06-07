@@ -40,6 +40,7 @@ WEB_DOMAIN = os.environ.get("WEB_DOMAIN") or "http://localhost:3000"
 #####
 AUTH_TYPE = AuthType((os.environ.get("AUTH_TYPE") or AuthType.DISABLED.value).lower())
 DISABLE_AUTH = AUTH_TYPE == AuthType.DISABLED
+CHAT_API_KEY = os.environ.get("DANSWER_API_KEY", "")
 
 # Turn off mask if admin users should see full credentials for data connectors.
 MASK_CREDENTIAL_PREFIX = (

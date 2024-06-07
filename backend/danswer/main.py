@@ -95,12 +95,7 @@ def validation_exception_handler(request: Request, exc: Exception) -> JSONRespon
         )
         raise exc
 
-    exc_str = f"{exc}".replace("\n", " ").replace("   ", " ")
-    logger.exception(f"{request}: {exc_str}")
-    content = {"status_code": 422, "message": exc_str, "data": None}
-    return JSONResponse(content=content, status_code=422)
-
-
+CHAT_API_KEY = os.environ.get("CHAT_API_KEY", "your-default-api-key")
 def value_error_handler(_: Request, exc: Exception) -> JSONResponse:
     if not isinstance(exc, ValueError):
         logger.error(f"Unexpected exception type in value_error_handler - {type(exc)}")
@@ -252,6 +247,7 @@ def get_application() -> FastAPI:
         title="Danswer Backend", version=__version__, lifespan=lifespan
     )
 
+    include_router_with_global_prefix_prepended(application, api_key_router, prefix="/chat", tags=["chat"])
     include_router_with_global_prefix_prepended(application, chat_router)
     include_router_with_global_prefix_prepended(application, query_router)
     include_router_with_global_prefix_prepended(application, document_router)

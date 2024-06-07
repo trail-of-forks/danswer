@@ -9,7 +9,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from danswer.auth.users import current_user
+from danswer.auth.users import current_user, validate_chat_api_key
 from danswer.chat.chat_utils import create_chat_chain
 from danswer.chat.process_message import stream_chat_message
 from danswer.configs.app_configs import WEB_DOMAIN
@@ -65,6 +65,7 @@ router = APIRouter(prefix="/chat")
 @router.get("/get-user-chat-sessions")
 def get_user_chat_sessions(
     user: User | None = Depends(current_user),
+    _: None = Depends(validate_chat_api_key),
     db_session: Session = Depends(get_session),
 ) -> ChatSessionsResponse:
     user_id = user.id if user is not None else None

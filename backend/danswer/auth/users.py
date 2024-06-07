@@ -7,7 +7,7 @@ from email.mime.text import MIMEText
 from typing import Optional
 from typing import Tuple
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Header
 from fastapi import Depends
 from fastapi import HTTPException
 from fastapi import Request
@@ -29,7 +29,7 @@ from sqlalchemy.orm import Session
 
 from danswer.auth.schemas import UserCreate
 from danswer.auth.schemas import UserRole
-from danswer.configs.app_configs import AUTH_TYPE
+from danswer.configs.app_configs import AUTH_TYPE, CHAT_API_KEY
 from danswer.configs.app_configs import DISABLE_AUTH
 from danswer.configs.app_configs import EMAIL_FROM
 from danswer.configs.app_configs import REQUIRE_EMAIL_VERIFICATION
@@ -59,6 +59,10 @@ logger = setup_logger()
 USER_WHITELIST_FILE = "/home/danswer_whitelist.txt"
 _user_whitelist: list[str] | None = None
 
+
+def validate_chat_api_key(x_api_key: str = Header(...)):
+    if x_api_key != CHAT_API_KEY:
+        raise HTTPException(status_code=400, detail="Invalid API Key")
 
 def verify_auth_setting() -> None:
     if AUTH_TYPE not in [AuthType.DISABLED, AuthType.BASIC, AuthType.GOOGLE_OAUTH]:
